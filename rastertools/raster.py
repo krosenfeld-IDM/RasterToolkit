@@ -188,6 +188,49 @@ def raster_clip_weighted(
 
     return data_dict
 
+def raster_crop(raster_file: Union[str, Path], output_file: Union[str, Path], latlon_box: tuple[float, float, float, float]) -> None:
+    """
+    Crop a raster to a latlon box.
+
+    Args:
+        raster_file (str): Local path to a raster file.
+        output_file (str): Local path to the output raster file.
+        latlon_box (tuple): Tuple of latlon box (lat0, lon0, lat1, lon1).
+    """
+    
+    # Open raster and tags (metadata)
+    raster = Image.open(raster_file)
+    tags = get_tiff_tags(raster)
+    tiffinfo = raster.tag_v2
+
+    # Latlon box of the raster
+    x0, y0, dx, dy = extract_xy_info_from_raster(raster)
+
+    # Get the indices within the latlon box
+    lat0_ind= int((latlon_box[0]-y0)/dy)
+    lon0_ind= int((latlon_box[1]-x0)/dx)
+    ny = int(abs(latlon_box[2]//dy))
+    nx = int(abs(latlon_box[3]//dx))
+
+    # Crop the raster
+    cropped = raster.crop((lon0_ind, lat0_ind-ny, lon0_ind+nx, lat0_ind))   
+
+    # udpate the tags
+    def get_v2_tag_key(tag_name, tags, tiffinfo):
+        i = list(tags.keys()).index(tag_name)
+        return list(tiffinfo.keys())[i]
+
+    # Update tags
+    ctiffinfo = {}
+    ctiffinfo[256] = nx
+    ctiffinfo[257] = ny
+    ctiffinfo[33922] = (0.0, 0.0, 0.0, x0+lon0_ind*dx, y0+(lat0_ind-ny)*dy, 0.0)
+    ctiffinfo[33550] = tiffinfo[33550]
+    ctiffinfo[get_v2_tag_key('GDAL_NODATA', tags, tiffinfo)] = tiffinfo[get_v2_tag_key('GDAL_NODATA', tags, tiffinfo)]
+
+    # Save
+    cropped.save(output_file, tiffinfo=ctiffinfo)
+
 
 def default_summary_func(v: np.ndarray) -> int:
     """Sum an array and round to the nearest integer."""
@@ -238,7 +281,7 @@ def extract_xy_info_from_raster(raster: Image) -> tuple[float, float, float, flo
 
 
 def init_sparce_matrix(raster: Image) -> np.ndarray:
-    """Initialize a matrix from a raster TIFF file with values > 0"""
+    """Initialize a matrix from a raster TIFF file with values > 0. """
 
     # Extract data from raster
     x0, y0, dx, dy = extract_xy_info_from_raster(raster)

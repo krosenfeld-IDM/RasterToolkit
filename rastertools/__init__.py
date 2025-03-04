@@ -1,5 +1,5 @@
 from .version import __version__, __versiondate__, __license__  # noqa : F401
-from rastertools.raster import raster_clip, raster_clip_weighted  # noqa : F401
+from rastertools.raster import raster_clip, raster_clip_weighted, raster_crop  # noqa : F401
 from rastertools.shape import shape_subdivide  # noqa : F401
 
 
@@ -9,4 +9,4 @@ __doc__ = """
 """
 
 # Use __all__ to let type checkers know what is part of the public API.
-_all_ = ["raster_clip", "raster_clip_weighted", "shape_subdivide"]
+_all_ = ["raster_clip", "raster_clip_weighted", "raster_crop", "shape_subdivide"]
