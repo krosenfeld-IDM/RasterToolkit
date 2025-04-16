@@ -3,6 +3,10 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any
 import json
+import qdrant_client
+from qdrant_client import models
+from sentence_transformers import SentenceTransformer
+import shutil
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -84,7 +88,38 @@ def analyze_package(package_path: str) -> List[Dict[str, Any]]:
     
     return all_results
 
-def main():
+def create_database(docs: List[Dict[str, Any]], db_path: str):
+    # Remove existing database if it exists
+    if os.path.exists(db_path):
+        shutil.rmtree(db_path)
+        
+    # Create a qdrant client using an in-memory instance
+    client = qdrant_client.QdrantClient(path=db_path)    
+
+    # Create a sentence transformer
+    encoder = SentenceTransformer("all-MiniLM-L6-v2")
+
+    # Create a collection
+    client.create_collection(
+        collection_name="docs",
+        vectors_config=models.VectorParams(
+            size=encoder.get_sentence_embedding_dimension(),  # Vector size is defined by used model
+            distance=models.Distance.COSINE,
+        ),
+    )
+
+    # Upload the docs
+    client.upload_points(
+        collection_name="docs",
+        points=[
+            models.PointStruct(
+                id=idx, vector=encoder.encode(doc["docstring_header"]).tolist(), payload=doc
+            )
+            for idx, doc in enumerate(docs)
+        ],
+    )    
+
+def main(verbose: bool = False):
     # Path to the rastertoolkit package
     package_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'rastertoolkit')
     
@@ -95,16 +130,20 @@ def main():
     with open(os.path.join(this_dir, 'data', 'rastertoolkit_docs.jsonl'), 'w', encoding='utf-8') as f:
         for item in results:
             f.write(json.dumps(item) + '\n')
+
+    # Create the database
+    create_database(results, os.path.join(this_dir, 'data', 'rastertoolkit_docs.db'))
     
     # Print results
-    for item in results:
-        print(f"\n{'='*80}")
-        print(f"Name: {item['name']}")
-        print(f"Type: {item['type']}")
-        print(f"File: {item['file']}")
-        print(f"\nDocstring Header:\n{item['docstring_header']}")
-        print(f"\nFull Docstring:\n{item['docstring']}")
-        print(f"\nSource Code:\n{item['source_code']}")
+    if verbose:
+        for item in results:
+            print(f"\n{'='*80}")
+            print(f"Name: {item['name']}")
+            print(f"Type: {item['type']}")
+            print(f"File: {item['file']}")
+            print(f"\nDocstring Header:\n{item['docstring_header']}")
+            print(f"\nFull Docstring:\n{item['docstring']}")
+            print(f"\nSource Code:\n{item['source_code']}")
 
 if __name__ == "__main__":
     main()
