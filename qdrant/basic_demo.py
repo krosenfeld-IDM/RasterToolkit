@@ -1,6 +1,8 @@
 """
 Demo using the qdrant vector database to store and retrieve information about the rastertoolkit package.
+https://qdrant.tech/documentation/beginner-tutorials/search-beginners/
 """
+
 import os
 import json
 import qdrant_client
@@ -13,7 +15,7 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(this_dir, 'data', 'rastertoolkit_docs.jsonl'), 'r', encoding='utf-8') as f:
     docs = [json.loads(line) for line in f]
 
-# Create a qdrant client
+# Create a qdrant client using an in-memory instance
 client = qdrant_client.QdrantClient(":memory:")
 
 # Create a sentence transformer
@@ -33,7 +35,7 @@ client.upload_points(
     collection_name="docs",
     points=[
         models.PointStruct(
-            id=idx, vector=encoder.encode(doc["docstring"]).tolist(), payload={k:doc[k] for k in ['name', 'type', 'file']}
+            id=idx, vector=encoder.encode(doc["docstring_header"]).tolist(), payload=doc
         )
         for idx, doc in enumerate(docs)
     ],
