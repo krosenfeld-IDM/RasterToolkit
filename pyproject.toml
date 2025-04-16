@@ -24,6 +24,10 @@ Homepage = "https://github.com/InstituteforDiseaseModeling/RasterToolkit"
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
 
+[tool.setuptools]
+packages = ["rastertoolkit"]
+include-package-data = true
+
 [tool.setuptools.dynamic]
 version = {attr = "rastertoolkit.version.__version__"}
 
