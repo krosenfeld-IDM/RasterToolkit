@@ -120,19 +120,27 @@ def create_database(docs: List[Dict[str, Any]], db_path: str):
     )    
 
 def main(verbose: bool = False):
+    
     # Path to the rastertoolkit package
-    package_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'rastertoolkit')
+    package_name = "rastertoolkit"
+    try:
+        # Try to find installed package location
+        package = __import__(package_name)
+        package_path = os.path.dirname(package.__file__)
+    except ImportError:
+        # Fall back to local package path
+        package_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), package_name)
     
     # Analyze the package
     results = analyze_package(package_path)
 
     # Save results to a JSONL file
-    with open(os.path.join(this_dir, 'data', 'rastertoolkit_docs.jsonl'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(this_dir, 'data', f'{package_name}_docs.jsonl'), 'w', encoding='utf-8') as f:
         for item in results:
             f.write(json.dumps(item) + '\n')
 
     # Create the database
-    create_database(results, os.path.join(this_dir, 'data', 'rastertoolkit_docs.db'))
+    create_database(results, os.path.join(this_dir, 'data', f'{package_name}_docs.db'))
     
     # Print results
     if verbose:
