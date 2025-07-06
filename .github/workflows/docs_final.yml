@@ -1,4 +1,4 @@
-name: Deploy final documentation
+name: Deploy docs to GH pages
 
 on:
   push:
@@ -11,34 +11,22 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-      - name: Setup Python and Git
-        uses: ./.github/actions/setup-python-and-git
-        with:
-          python-version: '3.10'
-      - name: Install dependencies
+          python-version: "3.x"
+      - name: Install packages
         run: |
-          git pull --all
-          pixi global install pandoc
-          uv venv --python 3.10
-          source .venv/bin/activate
-          uv pip install .
-          uv pip install -r docs/requirements.txt
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r docs/requirements.txt
       - name: Build static files
-        id: build
-        env:
-          ZENODO_API_TOKEN: ${{ secrets.ZENODO_API_TOKEN }}
         run: |
-          cd docs
-          uv run bash build_docs
+          mkdocs build -d site
       - name: Upload static files as artifact
-        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_build/html
-
-  # Deployment job
+          path: site/
   deploy:
     runs-on: ubuntu-latest
     environment:
@@ -50,5 +38,4 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4

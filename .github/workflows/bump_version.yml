@@ -21,9 +21,10 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.x"
       - name: Run bump script
-        run: python ./.github/scripts/bump_version.py
+        run: |
+          python3 ./.github/scripts/bump_version.py
       - name: Commit version change
         run: |
           git config user.name "Kurt Frey"

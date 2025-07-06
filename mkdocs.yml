@@ -1,0 +1,56 @@
+site_name: RasterToolkit
+site_url: https://institutefordiseasemodeling.github.io/RasterToolkit/
+repo_name: InstituteforDiseaseModeling/RasterToolkit
+repo_url: https://github.com/InstituteforDiseaseModeling/RasterToolkit
+
+theme:
+  name: material
+  font: 
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.footer
+  palette:
+    - scheme: default
+      primary: black
+      toggle:
+        icon: material/toggle-switch
+        name: Light mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Dark mode
+  favicon: assets/favicon.ico
+  logo: assets/idm-logo-transparent.png
+
+nav:
+  - Home: index.md
+  - Tutorials:
+    - tutorials.md
+    - tutorials/tut_dotnames.ipynb
+    - tutorials/tut_shape_subdivision.ipynb
+    - tutorials/tut_pop_clipping.ipynb
+
+plugins:
+  - search
+  - autorefs
+  - include-markdown
+  - glightbox
+  - mkdocs-autoapi:
+      autoapi_ignore:
+        - .github/**/*
+        - examples/**/*
+        - tests/**/*
+        - build/**/*
+        - docs/*
+      autoapi_add_nav_entry: True
+  - mkdocstrings
+  - mkdocs-jupyter
+
+markdown_extensions:
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+
+copyright: Copyright &copy; 2025 Gates Foundation. All rights reserved.
