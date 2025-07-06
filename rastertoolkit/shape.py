@@ -606,7 +606,7 @@ def plot_subdivision(
     shape_color: str = "gray",
     subdivision_color: str = "red",
     png_dpi=1800,
-):
+) -> None:
     """
     Plots shapes and their subdivisions into a PNG file.
 
@@ -633,3 +633,5 @@ def plot_subdivision(
         edgecolor=subdivision_color,
     )
     fig.savefig(png_file, dpi=png_dpi)
+
+    return None

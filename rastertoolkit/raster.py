@@ -78,8 +78,14 @@ def raster_clip(
 
 
 def raster_clip_single(
-    shp, sparce_data, k1, shape_len, summary_func, include_latlon, quiet
-):
+    shp: ShapeView,
+    sparce_data: np.ndarray,
+    k1: int,
+    shape_len: int,
+    summary_func: Callable,
+    include_latlon: bool,
+    quiet: bool
+) -> dict[str, Union[float, int]]:
     """
     Extracts data from a raster based on shapes.
 
