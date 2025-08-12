@@ -21,7 +21,7 @@ jobs:
       - name: Install packages
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install -r docs/requirements.txt
+          python3 -m pip install '.[docs]'
       - name: Build static files
         run: |
           mkdocs build -d site

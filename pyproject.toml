@@ -15,7 +15,20 @@ dependencies = [
     "pyshp~=2.3",
     "pyproj~=3.6",
     "scikit-learn~=1.5",
-    "shapely~=2.0"
+    "shapely~=2.0",
+]
+
+[project.optional-dependencies]
+docs = [
+    mkdocs-material,
+    mkdocs-include-markdown-plugin,
+    mkdocstrings-python,
+    mkdocs-autoapi,
+    mkdocs-glightbox,
+    mkdocs-jupyter,
+]
+tests = [
+    "pytest~=8.4",
 ]
 
 [project.urls]
