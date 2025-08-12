@@ -20,12 +20,12 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
-    mkdocs-material,
-    mkdocs-include-markdown-plugin,
-    mkdocstrings-python,
-    mkdocs-autoapi,
-    mkdocs-glightbox,
-    mkdocs-jupyter,
+    "mkdocs-material",
+    "mkdocs-include-markdown-plugin",
+    "mkdocstrings-python",
+    "mkdocs-autoapi",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter",
 ]
 tests = [
     "pytest~=8.4",
