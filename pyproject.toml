@@ -2,7 +2,7 @@
 name = "rastertoolkit"
 dynamic = ["version"]
 description = "Raster and shape tools"
-license-files = {"LICENSE"}
+license-files = ["LICENSE"]
 authors = [
     { name="Kurt Frey", email="kurt.frey@gatesfoundation.org" },
     { name="Dejan Lukacevic", email="dejan.lukacevic@gatesfoundation.org" },
