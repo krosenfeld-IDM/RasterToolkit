@@ -12,6 +12,7 @@ from scipy import interpolate
 from pathlib import Path
 from typing import Any, Union, Callable
 from rastertoolkit.shape import ShapeView
+import warnings
 
 
 def raster_clip(
@@ -41,10 +42,10 @@ def raster_clip(
 
     print("Loading data...")
 
-    # Load data, init sparce matrix
+    # Load data, init sparse matrix
     shapes = ShapeView.from_file(shape_stem, shape_attr, attr_filter)
     raster = Image.open(raster_file)
-    sparce_data = init_sparce_matrix(raster)
+    sparse_data = init_sparse_matrix(raster)
 
     # Output dictionary
     data_dict = dict()
@@ -60,7 +61,7 @@ def raster_clip(
         fts[k1] = executor.submit(
             raster_clip_single,
             shp=shp,
-            sparce_data=sparce_data,
+            sparse_data=sparse_data,
             k1=k1,
             shape_len=shape_len,
             summary_func=summary_func,
@@ -79,7 +80,7 @@ def raster_clip(
 
 def raster_clip_single(
     shp: ShapeView,
-    sparce_data: np.ndarray,
+    sparse_data: np.ndarray,
     k1: int,
     shape_len: int,
     summary_func: Callable,
@@ -91,7 +92,7 @@ def raster_clip_single(
 
     Args:
         shp (ShapeView): Shape object.
-        sparce_data (np.ndarray): Sparce matrix of raster data.
+        sparse_data (np.ndarray): Sparse matrix of raster data.
         k1 (int): Index of the shape.
         shape_len (int): Total number of shapes.
         summary_func (Callable): Aggregation function to be used for summarizing clipped data for each shape.
@@ -107,7 +108,7 @@ def raster_clip_single(
     shp.validate()
 
     # Subset population data matrix for clipping
-    data_clip = subset_matrix_for_clipping(shp, sparce_data)
+    data_clip = subset_matrix_for_clipping(shp, sparse_data)
 
     if data_clip.shape[0] == 0:
         data_dict[shp.name] = summary_entry(shp, {"pop": 0}, include_latlon)
@@ -161,9 +162,9 @@ def raster_clip_weighted(
     raster_weights = Image.open(raster_weight)
     raster_values = Image.open(raster_value)
 
-    # Init sparce matrices
-    sparce_pop = init_sparce_matrix(raster_weights)
-    sparce_val = init_sparce_matrix(raster_values)
+    # Init sparse matrices
+    sparse_pop = init_sparse_matrix(raster_weights)
+    sparse_val = init_sparse_matrix(raster_values)
 
     # Output dictionary
     data_dict = dict()
@@ -174,8 +175,8 @@ def raster_clip_weighted(
         shp.validate()
 
         # Subset matrices for clipping
-        pop_clip = subset_matrix_for_clipping(shape=shp, sparce_data=sparce_pop)
-        val_clip = subset_matrix_for_clipping(shape=shp, sparce_data=sparce_val, pad=1)
+        pop_clip = subset_matrix_for_clipping(shape=shp, sparse_data=sparse_pop)
+        val_clip = subset_matrix_for_clipping(shape=shp, sparse_data=sparse_val, pad=1)
 
         # Track booleans (indicates if lat/long is interior)
         data_bool = is_interior(shp, pop_clip)
@@ -245,7 +246,7 @@ def extract_xy_info_from_raster(raster: Image) -> tuple[float, float, float, flo
     return x0, y0, dx, dy
 
 
-def init_sparce_matrix(raster: Image) -> np.ndarray:
+def init_sparse_matrix(raster: Image) -> np.ndarray:
     """Initialize a matrix from a raster TIFF file with values > 0"""
 
     # Extract data from raster
@@ -253,39 +254,49 @@ def init_sparce_matrix(raster: Image) -> np.ndarray:
 
     dat_mat = np.array(raster)
     xy_ints = np.argwhere(dat_mat > 0)
-    sparce_data = np.zeros((xy_ints.shape[0], 3), dtype=float)
+    sparse_data = np.zeros((xy_ints.shape[0], 3), dtype=float)
 
-    # Construct sparce matrix of (long, lat, data)
-    sparce_data[:, 0] = x0 + dx * xy_ints[:, 1] + dx / 2.0
-    sparce_data[:, 1] = y0 + dy * xy_ints[:, 0] + dy / 2.0
-    sparce_data[:, 2] = dat_mat[xy_ints[:, 0], xy_ints[:, 1]]
+    # Construct sparse matrix of (long, lat, data)
+    sparse_data[:, 0] = x0 + dx * xy_ints[:, 1] + dx / 2.0
+    sparse_data[:, 1] = y0 + dy * xy_ints[:, 0] + dy / 2.0
+    sparse_data[:, 2] = dat_mat[xy_ints[:, 0], xy_ints[:, 1]]
 
-    return sparce_data
+    return sparse_data
+
+
+# Backwards compatibility
+def init_sparce_matrix(raster: Image) -> np.ndarray:
+    warnings.warn(
+        '"init_sparce_matrix" is deprecated and will be removed in a future release. Use "init_sparse_matrix" instead.',
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return init_sparse_matrix(raster)
 
 
 def subset_matrix_for_clipping(
-    shape: ShapeView, sparce_data: np.ndarray, pad: int = 0
+    shape: ShapeView, sparse_data: np.ndarray, pad: int = 0
 ) -> np.ndarray:
     """
     Subset the matrix for clipping
 
     Args:
         shape (ShapeView): Shape object.
-        sparce_data (np.ndarray): Sparce matrix of raster data.
+        sparse_data (np.ndarray): Sparse matrix of raster data.
         pad (int): Padding for clipping.
 
     Returns:
         np.ndarray: A subset of the matrix for clipping.
     """
     clip_bool1 = np.logical_and(
-        sparce_data[:, 0] > shape.xy_min[0] - pad,
-        sparce_data[:, 1] > shape.xy_min[1] - pad,
+        sparse_data[:, 0] > shape.xy_min[0] - pad,
+        sparse_data[:, 1] > shape.xy_min[1] - pad,
     )
     clip_bool2 = np.logical_and(
-        sparce_data[:, 0] < shape.xy_max[0] + pad,
-        sparce_data[:, 1] < shape.xy_max[1] + pad,
+        sparse_data[:, 0] < shape.xy_max[0] + pad,
+        sparse_data[:, 1] < shape.xy_max[1] + pad,
     )
-    data_clip = sparce_data[np.logical_and(clip_bool1, clip_bool2), :]
+    data_clip = sparse_data[np.logical_and(clip_bool1, clip_bool2), :]
 
     return data_clip
 
