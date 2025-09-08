@@ -23,6 +23,6 @@ jobs:
       - name: Install packages
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install '.[tests]'
+          python3 -m pip install .[tests]
       - name: Run unit-tests
         run: pytest -m unit -v
