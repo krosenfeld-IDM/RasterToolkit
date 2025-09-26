@@ -69,9 +69,7 @@ class ShapeView:
 
     def validate(self) -> None:
         assert self.points.shape[0] != 0 and len(self.paths) > 0, "No parts in a shape."
-        assert len(self.paths) == len(self.areas), (
-            "Inconsistent number of parts in a shape."
-        )
+        assert len(self.paths) == len(self.areas), "Inconsistent number of parts in a shape."
         assert self.name is not None and self.name != "", "Shape has no name."
 
     def as_polygon(self) -> Polygon:
@@ -89,23 +87,21 @@ class ShapeView:
         return MultiPolygon([shape]) if isinstance(shape, Polygon) else shape
 
     @classmethod
-    def read_shapes(
-        cls, shape_stem: Union[str, Path, Reader]
-    ) -> tuple[Reader, Shapes[Shape], list[ShapeRecord]]:
-        reader: Reader = (
-            shape_stem if isinstance(shape_stem, Reader) else Reader(str(shape_stem))
-        )
+    def read_shapes(cls,
+                    shape_stem: Union[str, Path, Reader]
+                    ) -> tuple[Reader, Shapes[Shape], list[ShapeRecord]]:
+        reader: Reader = shape_stem if isinstance(shape_stem, Reader) else Reader(str(shape_stem))
         shapes: Shapes[Shape] = reader.shapes()
         records: list[ShapeRecord] = reader.records()
+        print(reader.fields)
         return reader, shapes, records
 
     @classmethod
-    def from_file(
-        cls,
-        shape_stem: Union[str, Path, Reader],
-        shape_attr: Union[str, None] = None,
-        attr_filter: Union[str, None] = None,
-    ) -> list[ShapeView]:
+    def from_file(cls,
+                  shape_stem: Union[str, Path, Reader],
+                  shape_attr: Union[str, None] = None,
+                  attr_filter: Union[str, None] = None,
+                  ) -> list[ShapeView]:
         """
         Loads a shape into a shape view class.
 
