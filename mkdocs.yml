@@ -82,7 +82,7 @@ extra:
       href: "https://www.gatesfoundation.org/Terms-of-Use"
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/EMOD-Hub/emod-api
+      link: https://github.com/InstituteforDiseaseModeling/RasterToolkit
     - icon: fontawesome/regular/envelope
       link: mailto:idm@gatesfoundation.org
     - icon: octicons/globe-24
@@ -91,8 +91,6 @@ extra:
       link: http://www.youtube.com/@institutefordiseasemodelin1987
     - icon: fontawesome/brands/linkedin
       link: https://linkedin.com/company/institute-disease-modeling
-    - icon: fontawesome/brands/slack
-      link: https://gatesfoundation.enterprise.slack.com/
   analytics:
     feedback:
       title: Was this page helpful?
