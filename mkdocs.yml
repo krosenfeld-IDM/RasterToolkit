@@ -12,7 +12,7 @@ theme:
   logo: images/idm-logo-transparent.png
   favicon: images/favicon.ico
   features:
-    - navigation.footer
+    # - navigation.footer
     - content.code.copy
   palette:
     - scheme: default
