@@ -4,12 +4,10 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/**'
-      - 'docs/**'
-      - 'examples/**'
-      - 'rastertoolkit/version.py'
-      - 'tests/**'
+    paths:
+      - 'rastertoolkit/**'
+      - '!rastertoolkit/version.py'
+      - 'pyproject.toml'
 
   # Allows manual run from the Actions tab
   workflow_dispatch:
