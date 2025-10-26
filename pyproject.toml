@@ -28,7 +28,7 @@ docs = [
     "mkdocs-jupyter",
 ]
 tests = [
-    "pytest~=8.4",
+    "pytest",
 ]
 
 [project.urls]
