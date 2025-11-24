@@ -135,7 +135,7 @@ class ShapeView:
 
             # Iterate over parts of shapefile
             for k2 in range(len(prt_list) - 1):
-                shp_prt = shp.points[prt_list[k2] : prt_list[k2 + 1]]
+                shp_prt = shp.points[prt_list[k2]:prt_list[k2 + 1]]
                 path_shp = plth.Path(shp_prt, closed=True, readonly=True)
 
                 # Estimate area for part

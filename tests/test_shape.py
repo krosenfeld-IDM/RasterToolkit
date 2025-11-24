@@ -2,8 +2,6 @@ import numpy as np
 import pytest
 import re
 
-from typing import Dict
-
 from rastertoolkit.shape import ShapeView, area_sphere, centroid_area, shape_subdivide
 from pytest_init import change_test_dir  # don't remove
 
@@ -71,7 +69,7 @@ def test_shape_properties(one_shape):
     assert np.array_equal(shp.points[0, :], shp.points[-1, :])
 
     # centroid
-    assert round(shp.center[0],4) == 27.8632
+    assert round(shp.center[0], 4) == 27.8632
     assert round(shp.center[1], 4) == -11.7542
 
 
@@ -139,7 +137,7 @@ def run_shape_sub_test(one_shape, shape_file, tmp_path=None, target_area=None, p
     # Verify
     assert str(out_shape_stem).endswith(f"_{target_area or 100}km"), "Default name must end with target area."
     sub_shapes = [s for s in ShapeView.from_file(out_shape_stem) if s.name.startswith(pytest.expected_name)]
-    names = [s.name[len(pytest.expected_name)+1:] for s in sub_shapes]
+    names = [s.name[len(pytest.expected_name) + 1:] for s in sub_shapes]
     names_ok = [re.match("^[A-Z]0{3}[0-9]$", n) is not None for n in names]
     assert all(names_ok), "Shape names must match the pattern."  # "AFRO:DRCONGO:HAUT_KATANGA:KAMPEMBA:A0001"
 

@@ -66,7 +66,7 @@ def calc_sphere_area_diff(points: np.ndarray):
     # Compare diff
     # TODO: determine tolerance
     diff_km2 = abs(round(actual_km2, 2) - round(expected_km2, 2))
-    diff_perc = diff_km2/expected_km2
+    diff_perc = diff_km2 / expected_km2
     return diff_km2, diff_perc
 
 
