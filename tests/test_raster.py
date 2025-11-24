@@ -44,4 +44,3 @@ def test_raster_clip_weighted():
 
 
 # TODO: add unittests for helper functions form the raster module
-
