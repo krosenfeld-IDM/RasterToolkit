@@ -45,8 +45,8 @@ test = [
 
 [project.urls]
 Documentation = "https://institutefordiseasemodeling.github.io/RasterToolkit/"
-Repository="https://github.com/InstituteforDiseaseModeling/RasterToolkit"
-Issues="https://github.com/InstituteforDiseaseModeling/RasterToolkit/issues"
+Repository = "https://github.com/InstituteforDiseaseModeling/RasterToolkit"
+Issues = "https://github.com/InstituteforDiseaseModeling/RasterToolkit/issues"
 
 [tool.setuptools.dynamic]
 version = {attr = "rastertoolkit.version.__version__"}
