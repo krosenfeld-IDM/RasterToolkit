@@ -94,7 +94,7 @@ extra:
       link: https://linkedin.com/company/institute-disease-modeling
   analytics:
     provider: custom
-    tracking_id: GTM-NK4K647
+    property: GTM-NK4K647
     feedback:
       title: Was this page helpful?
       ratings:
