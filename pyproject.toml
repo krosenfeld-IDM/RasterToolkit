@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rastertoolkit"
-version = "0.3.25"
+version = "0.4.0"
 description = "Raster and shape tools"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -16,9 +16,9 @@ authors = [
 keywords = ['modeling', 'IDM']
 dependencies = [
     "matplotlib~=3.9",
-    "pyshp~=2.3",
+    "pyshp~=3.0",
     "pyproj~=3.6",
-    "scikit-learn~=1.5",
+    "scikit-learn~=1.6",
     "shapely~=2.0",
 ]
 license = "MIT"
