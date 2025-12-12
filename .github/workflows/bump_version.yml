@@ -30,4 +30,6 @@ jobs:
       - name: Bump version
         run: |
           bump2version --commit patch pyproject.toml
+          git config --global user.name "IDM Tools"
+          git config --global user.email "idmtools@idmod.org"
           git push
