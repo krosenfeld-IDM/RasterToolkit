@@ -6,7 +6,7 @@ RasterToolkit is a Python package for processing rasters with minimal dependenci
 
 Install from github:
 
-    pip install git+https://github.com/InstituteforDiseaseModeling/RasterToolkit.git
+    python -m pip install .
 
 ## Getting Started
 
@@ -28,38 +28,22 @@ A typical `shape_subdivide` API usage scenario:
 ```
 See the complete code in the Shape Subdivision example (examples/shape_subdivide)
 
-## Developer Setup 
-
-1. Clone or download this GitHub repo and navigate to the root directory.
-```
-    git clone git@github.com:InstituteforDiseaseModeling/RasterToolkit.git
-    cd RasterToolkit
-```
-2. Create a Python virtual environment (here useing `uv`; see https://astral.sh/uv/):
-```
-    uv venv --python 3.10
-    source .venv/bin/activate
-```
-3. Install this package in editable mode (this also installs all the requirements).::
-```
-    uv pip install -e .   
-```
 
 ## Running Tests
 
 Install additional packages (like pytest)::
 ```
-    uv pip install -r requirements-test.txt
+    python -m pip install .[test]
 ```
 Run `pytest` command::
 ```
     # Run unit tests (recommended during development)
-    pytest -m unit -v
+    python -m pytest -m unit -v
 
     # Run test for a specific module, for example
-    pytest tests/test_shape.py -v     # run shape unit tests
-    pytest tests/test_download.py -v  # run GDx download tests
+    python -m pytest tests/test_shape.py -v     # run shape unit tests
+    python -m pytest tests/test_download.py -v  # run GDx download tests
 
     # All tests (before a commit or merging a PR)
-    pytest -v
+    python -m pytest -v
 ```
