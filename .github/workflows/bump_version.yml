@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - 'rastertoolkit/**'
-      - '!rastertoolkit/version.py'
       - 'pyproject.toml'
 
   # Allows manual run from the Actions tab
   workflow_dispatch:
+
+permissions:
+  contents: write # Allow writing to the repository (e.g., commits, pushes)
 
 jobs:
   bump-version:
@@ -18,19 +20,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.KFREY_PAT }}
       - name: Setup python
         uses: actions/setup-python@v6
         with:
           python-version: '3.x'
-      - name: Run bump script
+      - name: Install dependencies
         run: |
-          python3 ./.github/scripts/bump_version.py
-      - name: Commit version change
+          python -m pip install .[packaging]
+      - name: Bump version
         run: |
-          git config user.name "Kurt Frey"
-          git config user.email "kfrey@idmod.org"
-          git add .
-          git commit -m "Bump version"
+          bump2version --commit patch pyproject.toml
           git push
