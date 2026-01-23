@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rastertoolkit"
-version = "0.4.1"
+version = "0.4.3"
 description = "Raster and shape tools"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -40,9 +40,6 @@ docs = [
 lint = [
     "flake8",
 ]
-packaging = [
-    "bump2version",
-]
 test = [
     "pytest",
     "pytest-cov",
@@ -52,3 +49,10 @@ test = [
 Documentation = "https://institutefordiseasemodeling.github.io/RasterToolkit/"
 Repository = "https://github.com/InstituteforDiseaseModeling/RasterToolkit"
 Issues = "https://github.com/InstituteforDiseaseModeling/RasterToolkit/issues"
+
+[tool.bumpversion]
+current_version = "0.4.3"
+commit = true
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"

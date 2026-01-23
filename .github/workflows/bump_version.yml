@@ -18,18 +18,7 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v5
-      - name: Setup python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-      - name: Install dependencies
-        run: |
-          python -m pip install .[packaging]
       - name: Bump version
-        run: |
-          git config --global user.name "IDM Tools"
-          git config --global user.email "idmtools@idmod.org"
-          bump2version --commit patch pyproject.toml
-          git push
+        uses: callowayproject/bump-my-version@1.2.6
+        with:
+          args: patch -vv
