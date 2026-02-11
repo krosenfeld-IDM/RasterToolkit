@@ -1,4 +1,4 @@
-name: Increment patch version
+name: Test and update version
 
 on:
   push:
