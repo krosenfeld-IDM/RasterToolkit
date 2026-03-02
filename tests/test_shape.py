@@ -5,6 +5,7 @@ import re
 from rastertoolkit.shape import ShapeView, area_sphere, centroid_area, shape_subdivide
 
 from pathlib import Path
+from shapefile import Reader, Writer
 
 
 @pytest.fixture(autouse=True)
@@ -149,3 +150,41 @@ def run_shape_sub_test(one_shape, shape_file, tmp_path=None, target_area=None, p
     expected_area = one_shape.area_km2
     actual_area = sum([s.area_km2 for s in sub_shapes])
     assert round(expected_area, 1) == round(actual_area, 1)
+
+
+@pytest.mark.unit
+def test_shape_sub_extra_field(shape_file, tmp_path):
+    """Regression test: extra fields beyond DOTNAME must survive subdivision.
+
+    pyshp 3.0 returns Field namedtuples; wrapping them with tuple() strips
+    the .size attribute that pyshp needs when writing the DBF header.
+    """
+    # Create a copy of the test shapefile with an extra field
+    extra_shape_stem = tmp_path / "extra_field_test"
+    with Reader(str(shape_file)) as sf_in:
+        with Writer(str(extra_shape_stem)) as sf_out:
+            # Copy all existing fields
+            for field in sf_in.fields[1:]:  # skip DeletionFlag
+                sf_out.field(*field)
+            # Add an extra numeric field
+            sf_out.field("EXTRA", "N", 10, 0)
+            # Copy shapes and records, appending a value for the extra field
+            for i, shaperec in enumerate(sf_in.iterShapeRecords()):
+                sf_out.shape(shaperec.shape)
+                sf_out.record(*shaperec.record, i + 1)
+
+    # Subdivide the shapefile with the extra field
+    out_shape_stem = shape_subdivide(
+        shape_stem=extra_shape_stem,
+        out_dir=tmp_path,
+        box_target_area_km2=100,
+    )
+
+    # Verify the extra field is present in the output
+    with Reader(str(out_shape_stem)) as sf_out:
+        field_names = [f[0] for f in sf_out.fields[1:]]  # skip DeletionFlag
+        assert "EXTRA" in field_names, "Extra field must be preserved in output"
+
+        # Verify that records have values for the extra field
+        for rec in sf_out.records():
+            assert rec["EXTRA"] is not None
