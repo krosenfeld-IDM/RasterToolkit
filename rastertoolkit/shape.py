@@ -405,7 +405,7 @@ def shape_subdivide(
     sf1new = Writer(out_shape_stem)
     sf1new.field(shape_attr, "C", 70, 0)
     sf1new.fields.extend(
-        [tuple(t) for t in sf1.fields if t[0] not in ["DeletionFlag", shape_attr]]
+        [t for t in sf1.fields if t[0] not in ["DeletionFlag", shape_attr]]
     )
 
     if output_centers:
